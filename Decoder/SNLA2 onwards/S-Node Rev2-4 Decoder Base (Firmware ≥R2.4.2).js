@@ -21,6 +21,9 @@ to reduce wasted data for payloads that contain false GNSS positioning coordinat
 20260114: R2-3
 * Added all lines for sdi12 slots (0-9) in decoded segment.
 
+20260806: R2-4
+* Added comment(s) regarding how the GNSS values are encoded and decoded.
+* Cleaded code surrounding GNSS decoding.
 */
 
 // Structure Type Define, 'nested' or 'flat'
@@ -160,18 +163,17 @@ function primaryDecoder(buf,p){
 		var gnss = +((charge_fault & 4) >> 2) > 0 ? 1 : 0;		//1 = True, 0 = False
 		arr.push(["gnss", 0, gnss, src]);
 		
-		if(gnss){ //If GNSS payload type is True, then it contains a payload that may have GNSS data:
-			var latitude_raw = +((buf.readInt32BE(byte=byte+1)/10000000).toFixed(6)); 
+		//If GNSS payload type is True, then it contains a payload that may have GNSS data:
+		if (gnss) { 
+			var latitude_raw = +((buf.readInt32BE(byte=byte+1)/10000000).toFixed(6));
 			var longitude_raw = +((buf.readInt32BE(byte=byte+4)/10000000).toFixed(6));
-			
-				if((latitude_raw != 0) && (longitude_raw != 0)){ //If GNSS lat AND long are not equal to zero, therefore real positioning data thus push real readings to push array to parser.
+			// If GNSS lat AND long are not equal to zero, therefore real positioning data is present, therefore push real readings to push array.
+			// Otherwise Lat AND Long = 0, no lat or long are parsed to message, therefore complete parising of only power diagnostics
+			if ((latitude_raw != 0) && (longitude_raw != 0)) { 
 				arr.push(["latitude", 0, latitude_raw, src, "Degrees"]);
 				arr.push(["longitude", 0, longitude_raw, src, "Degrees"]);
-				return arr;
-				}
-				else{
-					return arr;
-				} //else if Lat AND Long = 0, no lat or long are parsed to message, therefore complete parising of only power diagnostics
+			} 
+			return arr;
 		}
 		
 		if(buf.length < 10){
