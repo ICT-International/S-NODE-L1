@@ -1,5 +1,13 @@
 SNLA5 (Hardware Revision R5-0)
 		Measurement & Transmission:
+			* GNSS (L1G models)
+				* Latitude and longitude reported to six significant digits.
+				* External Antenna via SMA connector
+				* Adjustable acquisition period 
+					Recommended default: gps period 86400 (86400 seconds = once daily)
+				* Adjustable fix limit
+					Recommended default: fix limit 180000 (180000 milliseconds = 3minutes)
+
 			Measuring/Reporting period range:
 				Typical: 600 to 900 seconds
 				Absolute Minimum: 120 seconds (Subject to power and RF Duty cycle limits)
